@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
+const sauceRoutes = require("./routes/sauces");
 
 const app = express();
 
@@ -13,9 +14,6 @@ mongoose
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
-
-// Permet de récupérer le body de la requête sans body parser
-app.use(express.json());
 
 // change les headers pour pouvoir éxécuter des requêtes
 app.use((req, res, next) => {
@@ -31,6 +29,10 @@ app.use((req, res, next) => {
   next();
 });
 
+// Permet de récupérer le body de la requête dans req.body sans body parser
+app.use(express.json());
+
 app.use("/api/auth", userRoutes);
+app.use("/api/sauces", sauceRoutes);
 
 module.exports = app;
