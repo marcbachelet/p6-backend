@@ -32,7 +32,9 @@ app.use((req, res, next) => {
 // Permet de récupérer le body de la requête dans req.body sans body parser
 app.use(express.json());
 
-app.use("/api/auth", userRoutes);
+app.use("/images", express.static(path.join(__dirname, "images")));
+
 app.use("/api/sauces", sauceRoutes);
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
