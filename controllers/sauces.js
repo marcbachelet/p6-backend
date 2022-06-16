@@ -34,29 +34,16 @@ exports.modifySauce = (req, res, next) => {
 };
 
 exports.deleteSauce = (req, res, next) => {
-  Sauce.findOne({ _id: req.params.id }).then((sauce) => {
-    if (!sauce) {
-      res.status(404).json({
-        error: new Error("Sauce non trouvée!"),
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => {
+      const filename = sauce.imageUrl.split("/images/")[1];
+      fs.unlink(`images/${filename}`, () => {
+        Sauce.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: "Objet supprimé !" }))
+          .catch((error) => res.status(400).json({ error }));
       });
-    }
-    if (sauce.userId !== req.auth.userId) {
-      res.status(400).json({
-        error: new Error("Requête non autrisée!"),
-      });
-    }
-    Sauce.deleteOne({ _id: req.params.id })
-      .then(() => {
-        res.status(200).json({
-          message: "Sauce supprimée!",
-        });
-      })
-      .catch((error) => {
-        res.status(400).json({
-          error: error,
-        });
-      });
-  });
+    })
+    .catch((error) => res.status(500).json({ error }));
 };
 
 exports.getOneSauce = (req, res, next) => {
@@ -70,35 +57,6 @@ exports.getAllSauce = (req, res, next) => {
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(400).json({ error }));
 };
-
-// exports.likeSauceOrNot = (req, res, next) => {
-//   Sauce.findOne({ _id: req.params.id })
-//     .then((sauce) => {
-//       if (!sauce.usersLiked.includes(req.body.userId) && req.body.like === 1) {
-//         Sauce.updateOne(
-//           { _id: req.params.id },
-//           {
-//             $inc: { likes: 1 },
-//             $push: { usersLiked: req.body.userId },
-//           }
-//         )
-//           .then(() => res.status(201).json({ msg: "Sauce +1 like" }))
-//           .catch((error) => res.status(400).json({ error }));
-//       }
-//       if (Sauce.usersLiked.includes(req.body.userId) && req.body.like === 0) {
-//         Sauce.updateOne(
-//           { _id: req.params.id },
-//           {
-//             $inc: { likes: -1 },
-//             $pull: { usersLiked: req.body.userId },
-//           }
-//         )
-//           .then(() => res.status(201).json({ msg: "Sauce 0 like" }))
-//           .catch((error) => res.status(400).json({ error }));
-//       }
-//     })
-//     .catch((error) => res.status(400).json({ error }));
-// };
 
 exports.likeSauceOrNot = async (req, res, next) => {
   try {
@@ -153,7 +111,7 @@ exports.likeSauceOrNot = async (req, res, next) => {
         }
       );
     }
-    res.status(200).json({ message: "choix modifié" });
+    res.status(200).json({ msg: "Prise en compte de votre choix" });
   } catch (error) {
     res.status(400).json({ error });
   }

@@ -1,5 +1,7 @@
 const express = require("express");
 const path = require("path");
+const dotenv = require("dotenv");
+const envconfig = dotenv.config();
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauces");
@@ -9,7 +11,7 @@ const app = express();
 // connecte mongoose a mongodb
 mongoose
   .connect(
-    "mongodb+srv://marco:marco@cluster0.mp0ey0t.mongodb.net/?retryWrites=true&w=majority",
+    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
@@ -33,7 +35,6 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use("/images", express.static(path.join(__dirname, "images")));
-
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 
