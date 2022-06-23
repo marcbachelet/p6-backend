@@ -1,9 +1,11 @@
-const rateLimit = require("express-rate-limit");
+const rateLimit = require("express-rate-limit").default;
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 15,
-  msg: "veuillez réessayer dans 15 minutes",
+  windowMs: 5 * 60 * 1000,
+  max: 5,
+  message: "Veuillez réessayer dans 5 minutes",
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 module.exports = limiter;
