@@ -5,6 +5,7 @@ const envconfig = dotenv.config();
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauces");
+const helmet = require("helmet");
 
 const app = express();
 
@@ -33,6 +34,9 @@ app.use((req, res, next) => {
 
 // Permet de récupérer le body de la requête dans req.body sans body parser
 app.use(express.json());
+
+// Permet d'améliorer la sécurité de l'application
+app.use(helmet());
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/sauces", sauceRoutes);

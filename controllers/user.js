@@ -34,8 +34,10 @@ exports.login = (req, res, next) => {
             userId: user._id,
             token: jsonwebToken.sign(
               { userId: user._id },
-              "RANDOM_TOKEN_SECRET",
-              { expiresIn: "24h" }
+              `${process.env.RTS}`,
+              {
+                expiresIn: "24h",
+              }
             ),
           });
         })
